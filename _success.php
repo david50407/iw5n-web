@@ -1,8 +1,9 @@
 ﻿<?php
+/*
 define('HOST', 'http://' . $_SERVER['HTTP_HOST']);
 define('ROOT', dirname(__FILE__));
 define('DS', DIRECTORY_SEPARATOR);
-
+*/
 define ("PLURK_CONSUMER_KEY", "19CP2C0JP7JP");
 define ("PLURK_CONSUMER_SECRET", "yns1SeNvW96iJLml05mFzQFCtqBtdMBl");
 define ("PLURK_CALLBACK_URL", HOST);
@@ -31,7 +32,7 @@ try {
     if ((!isset($_SESSION['plurk_oauth_token']) || empty($_SESSION['plurk_oauth_token']))
 			&& !isset($_GET['oauth_verifier']))
         header("Location: " . HOST);
-    } else {
+    else {
         $oauthToken = isset($_GET['oauth_token']) ? $_GET['oauth_token'] : $_SESSION['plurk_oauth_token'];
         try {
             $params = array(
@@ -52,21 +53,19 @@ try {
         $result = $req->doRequest(0);
         $result = json_decode($result['body'], true);
         
-	$store = 'oauth_' . PLURK_CONSUMER_KEY;
-	$token = $$store['token'];
-	$tokenS = $$store['token_secret'];
-
+	$store = $_SESSION['oauth_' . PLURK_CONSUMER_KEY];
+	$token = $store['token'];
+	$tokenS = $store['token_secret'];
 	try {
 		$fp = fopen(ROOT . DS . 'new_user.log' . DS . $token, "w+");
 		fwrite($fp, $tokenS);
 		fclose($fp);
-	} catch ($e) {
+	} catch(Exception $e) {
 		header("Location: " . HOST);
 	}
         $userName = empty($result['display_name']) ? $result['nick_name'] : $result['display_name'];
     }
 } catch(OAuthException2 $e) {
-echo $e;
     header("Location: " . HOST);
 }
 ?>

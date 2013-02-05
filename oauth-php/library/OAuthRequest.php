@@ -200,7 +200,7 @@ class OAuthRequest
 		$this->checks();
 
 		$base      = $this->signatureBaseString();
-		echo "<br />".$base."<br />";
+		// echo "<br />".$base."<br />";
 		$signature = $this->calculateDataSignature($base, $consumer_secret, $token_secret, $this->param['oauth_signature_method']);
 		return $signature;
 	}
