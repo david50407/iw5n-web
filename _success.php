@@ -5,7 +5,7 @@ define('DS', DIRECTORY_SEPARATOR);
 
 define ("PLURK_CONSUMER_KEY", "19CP2C0JP7JP");
 define ("PLURK_CONSUMER_SECRET", "yns1SeNvW96iJLml05mFzQFCtqBtdMBl");
-define ("PLURK_CALLBACK_URL", HOST . "/success.php");
+define ("PLURK_CALLBACK_URL", HOST);
 
 define ("PLURK_OAUTH_HOST", "http://www.plurk.com");
 define ("PLURK_REQUEST_TOKEN_URL", PLURK_OAUTH_HOST . "/OAuth/request_token");
@@ -45,7 +45,6 @@ try {
             OAuthRequester::requestAccessToken(PLURK_CONSUMER_KEY, $oauthToken, 0, 'GET', $params);
         } catch(OAuthException2 $e) {
             header("Location: " . HOST);
-            echo $e . "<br />";
         }
         $request_uri = 'http://www.plurk.com/APP/Users/currUser';
         $params = array();
@@ -53,12 +52,18 @@ try {
         $result = $req->doRequest(0);
         $result = json_decode($result['body'], true);
         
-        $_SESSION['nick_name'] = $result['nick_name'];
-        $_SESSION['display_name'] = empty($result['display_name']) ? $result['nick_name'] : $result['display_name'];
-        $_SESSION['logined'] = true;
-        $_SESSION['plurk_oauth_token'] = $oauthToken;
+	$store = 'oauth_' . PLURK_CONSUMER_KEY;
+	$token = $$store['token'];
+	$tokenS = $$store['token_secret'];
 
-        header("Location: " . HOST);
+	try {
+		$fp = fopen(ROOT . DS . 'new_user.log' . DS . $token, "w+");
+		fwrite($fp, $tokenS);
+		fclose($fp);
+	} catch ($e) {
+		header("Location: " . HOST);
+	}
+        $userName = empty($result['display_name']) ? $result['nick_name'] : $result['display_name'];
     }
 } catch(OAuthException2 $e) {
 echo $e;

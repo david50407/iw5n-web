@@ -5,7 +5,7 @@ define('DS', DIRECTORY_SEPARATOR);
 
 define ("PLURK_CONSUMER_KEY", "19CP2C0JP7JP");
 define ("PLURK_CONSUMER_SECRET", "yns1SeNvW96iJLml05mFzQFCtqBtdMBl");
-define ("PLURK_CALLBACK_URL", HOST . "/success.php");
+define ("PLURK_CALLBACK_URL", HOST);
 
 define ("PLURK_OAUTH_HOST", "http://www.plurk.com");
 define ("PLURK_REQUEST_TOKEN_URL", PLURK_OAUTH_HOST . "/OAuth/request_token");
@@ -39,7 +39,6 @@ try {
     $tokenResultParams = OAuthRequester::requestRequestToken(PLURK_CONSUMER_KEY, 0, $params);
     header("Location: " . PLURK_AUTHORIZE_URL . "?oauth_token=". $tokenResultParams['token']);
 } catch(OAuthException2 $e) {
-echo $e;
     header("Location: " . HOST);
 }
 ?>
